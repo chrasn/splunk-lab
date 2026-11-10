@@ -1,0 +1,16 @@
+name: conf-sjekk
+on: pull_request
+jobs:
+  sjekk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sjekk .conf-syntaks
+        run: |
+          feil=0
+          for f in $(find apps -name '*.conf' -o -name '*.meta'); do
+            if grep -nEv '^[[:space:]]*($|#|\[.*\]$|[^=]+=.*)' "$f"; then
+              echo "Ugyldig linje i $f"; feil=1
+            fi
+          done
+          exit $feil
